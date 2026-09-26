@@ -1,26 +1,54 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
-import { useEffect } from 'react';
+// src/App.jsx
+import { useState } from 'react';
+import TouristView from './components/TouristView';
+import HotelDashboard from './components/HotelDashboard';
+import AdminDashboard from './components/AdminDashboard';
+import './App.css';
 
-function App() {
-  const [status, setStatus] = useState("Connecting...");
 
-  useEffect(() => {
-    fetch('http://localhost:5000/api/health')
-      .then(res => res.json())
-      .then(data => setStatus(data.message))
-      .catch(() => setStatus("Failed to connect to backend"));
-  }, []);
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('tourist');
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>Tourism360 Setup Check</h1>
-      <p>Backend Status: <strong>{status}</strong></p>
+    <div className="app-container">
+      {/* Top Header & Navigation */}
+      <header className="navbar">
+        <div className="brand">
+          <h2>🌐 Tourism360</h2>
+          <span className="brand-badge">Smart Tourism Ecosystem</span>
+        </div>
+
+        <nav className="nav-tabs">
+          <button 
+            className={`nav-btn ${activeTab === 'tourist' ? 'active' : ''}`}
+            onClick={() => setActiveTab('tourist')}
+          >
+            🎒 Tourist App
+          </button>
+          
+          <button 
+            className={`nav-btn ${activeTab === 'hotel' ? 'active' : ''}`}
+            onClick={() => setActiveTab('hotel')}
+          >
+            🏨 Hotel Dashboard
+          </button>
+          
+          <button 
+            className={`nav-btn ${activeTab === 'admin' ? 'active' : ''}`}
+            onClick={() => setActiveTab('admin')}
+          >
+            📊 Tourism Admin
+          </button>
+        </nav>
+      </header>
+
+      {/* Main View Container */}
+      <main className="tab-content">
+        {activeTab === 'tourist' && <TouristView />}
+        {activeTab === 'hotel' && <HotelDashboard />}
+        {activeTab === 'admin' && <AdminDashboard />}
+      </main>
     </div>
   );
 }
-
-export default App;
