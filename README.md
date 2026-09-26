@@ -1,2 +1,3 @@
 # 1st-project-AN-
-Project for Industrial training and for Software engineering
+Project for Smart India Hackthon
+
