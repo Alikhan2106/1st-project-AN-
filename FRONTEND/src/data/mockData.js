@@ -37,8 +37,39 @@ export const UDAIPUR_ATTRACTIONS = [
   }
 ];
 
+
+
 export const MOCK_LOCAL_BUSINESSES = [
-  { id: "b1", name: "Traditional Pottery Workshop", type: "Workshop", distance: "0.8 km", price: "₹300" },
-  { id: "b2", name: "Mewari Family Restaurant", type: "Food", distance: "1.2 km", price: "₹250" },
-  { id: "b3", name: "Heritage Old-City Walking Tour", type: "Guide", distance: "0.5 km", price: "₹500" }
+  {
+    id: 1,
+    cityId: "udaipur",
+    name: "Jharokha Lake Cafe",
+    type: "Cafe",
+    distance: "0.4 km away",
+    price: "₹300 - ₹600",
+  },
+  {
+    id: 2,
+    cityId: "udaipur",
+    name: "Traditional Pichola Crafts",
+    type: "Handicraft",
+    distance: "0.8 km away",
+    price: "₹500 - ₹2,000",
+  },
+  {
+    id: 3,
+    cityId: "agra",
+    name: "Petha Junction",
+    type: "Food",
+    distance: "1.2 km away",
+    price: "₹150 - ₹400",
+  },
+  {
+    id: 4,
+    cityId: "jaipur",
+    name: "Hawa Mahal Handlooms",
+    type: "Handicraft",
+    distance: "0.5 km away",
+    price: "₹400 - ₹1,500",
+  },
 ];

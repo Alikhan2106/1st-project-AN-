@@ -1,24 +1,25 @@
-// src/App.jsx
-import { useState } from 'react';
-import TouristView from './components/TouristView';
-import HotelDashboard from './components/HotelDashboard';
-import AdminDashboard from './components/AdminDashboard';
-import './App.css';
-
-
+import React, { useState } from "react";
+import Navbar from "./components/Navbar";
+import TouristView from "./components/TouristView";
+import HotelDashboard from "./components/HotelDashboard";
+import TourismAdmin from "./components/TourismAdmin";
+import "./App.css";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('tourist');
+  const [activeTab, setActiveTab] = useState("explore");
 
   return (
     <div className="app-container">
-      {/* Top Header & Navigation */}
-      
-      {/* Main View Container */}
-      <main className="tab-content">
-        {activeTab === 'tourist' && <TouristView />}
-        {activeTab === 'hotel' && <HotelDashboard />}
-        {activeTab === 'admin' && <AdminDashboard />}
+      {/* GLOBAL NAVBAR - Appears on every view */}
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      {/* VIEW ROUTING */}
+      <main className="main-content">
+        {activeTab === "explore" && (
+          <TouristView activeTab={activeTab} setActiveTab={setActiveTab} />
+        )}
+        {activeTab === "hotels" && <HotelDashboard />}
+        {activeTab === "admin" && <TourismAdmin />}
       </main>
     </div>
   );

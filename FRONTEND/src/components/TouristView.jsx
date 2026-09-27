@@ -1,10 +1,20 @@
 import { useState, useEffect } from "react";
+import Navbar from "./Navbar";
 import { generateMockItinerary } from "../utils/planner";
 import { MOCK_LOCAL_BUSINESSES } from "../data/mockData";
 import "./TouristView.css";
 
-// Cities list with coordinates, descriptions, and hero images
+// Cities list with High-Res Udaipur as default landing destination
 const CITIES = [
+  {
+    id: "udaipur",
+    name: "Udaipur",
+    state: "Rajasthan",
+    tagline: "Lakes, palaces & slow sunsets",
+    image: "https://plus.unsplash.com/premium_photo-1697729728192-c94f0bfa5b75?w=1200&auto=format&fit=crop&q=80&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8dWRhaXB1cnxlbnwwfHwwfHx8MA%3D%3D",
+    lat: 24.5854,
+    lon: 73.7125,
+  },
   {
     id: "jaipur",
     name: "Jaipur",
@@ -13,15 +23,6 @@ const CITIES = [
     image: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&auto=format&fit=crop&q=80",
     lat: 26.9124,
     lon: 75.7873,
-  },
-  {
-    id: "udaipur",
-    name: "Udaipur",
-    state: "Rajasthan",
-    tagline: "Lakes, palaces & slow sunsets",
-    image: "https://images.unsplash.com/photo-1615836245337-f5b9b2303f1c?w=800&auto=format&fit=crop&q=80",
-    lat: 24.5854,
-    lon: 73.7125,
   },
   {
     id: "jodhpur",
@@ -105,9 +106,10 @@ const INTERESTS = [
   { name: "Culture", icon: "🎭" },
 ];
 
-export default function TouristView() {
-  const [selectedCity, setSelectedCity] = useState(CITIES[4]); // Default to Agra
+export default function TouristView({ activeTab, setActiveTab }) {
+  const [selectedCity, setSelectedCity] = useState(CITIES[0]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Live Weather States
   const [liveWeather, setLiveWeather] = useState("Loading...");
@@ -119,7 +121,14 @@ export default function TouristView() {
   const [interests, setInterests] = useState(["History", "Photography"]);
   const [itinerary, setItinerary] = useState(null);
 
-  // Fetch Live Weather from Open-Meteo
+  // Filter cities for search inside modal
+  const filteredCities = CITIES.filter(
+    (city) =>
+      city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      city.state.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Fetch Live Weather from Open-Meteo API
   useEffect(() => {
     async function fetchWeather() {
       setIsLoadingWeather(true);
@@ -149,6 +158,7 @@ export default function TouristView() {
   const handleCitySelect = (city) => {
     setSelectedCity(city);
     setIsModalOpen(false);
+    setSearchQuery("");
     setItinerary(null);
   };
 
@@ -181,30 +191,24 @@ export default function TouristView() {
     setItinerary(updated);
   };
 
+  // Filter local businesses for the selected city
+  const localGems = MOCK_LOCAL_BUSINESSES.filter(
+    (b) => b.cityId === selectedCity.id
+  );
+
   return (
     <div className="tourist-page">
-      {/* NAVBAR */}
-      <nav className="top-navbar">
-        <div className="nav-brand">
-          <strong>Tourism360</strong>
-          <span className="brand-badge">Smart Tourism Ecosystem</span>
-        </div>
-
-        <div className="nav-links">
-          <a href="#home">Home</a>
-          <a href="#explore" className="active">Explore</a>
-          <a href="#planner">AI Planner</a>
-          <a href="#hotels">Hotel Dashboard</a>
-          <a href="#admin">Tourism Admin</a>
-        </div>
-
-        <button className="location-btn" onClick={() => setIsModalOpen(true)}>
-          📍 {selectedCity.name} <span>›</span>
-        </button>
-      </nav>
+      {/* REUSABLE NAVBAR */}
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        selectedCity={selectedCity}
+        setIsModalOpen={setIsModalOpen}
+      />
 
       {/* LANDING HERO */}
       <section
+        id="home-section"
         className="landing-hero"
         style={{ backgroundImage: `url(${selectedCity.image})` }}
       >
@@ -225,7 +229,15 @@ export default function TouristView() {
           </p>
 
           <div className="hero-actions">
-            <a href="#planner-section" className="btn-primary">
+            <a
+              href="#planner-section"
+              className="btn-primary"
+              onClick={(e) => {
+                e.preventDefault();
+                if (setActiveTab) setActiveTab("explore");
+                document.getElementById("planner-section")?.scrollIntoView({ behavior: "smooth" });
+              }}
+            >
               ✨ Build my trip
             </a>
             <button className="btn-secondary" onClick={() => setIsModalOpen(true)}>
@@ -249,38 +261,59 @@ export default function TouristView() {
           <div className="city-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Choose a Destination</h3>
+
+              <div className="modal-search-box">
+                <input
+                  type="text"
+                  placeholder="Search city or state..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  autoFocus
+                />
+                {searchQuery && (
+                  <button className="clear-search" onClick={() => setSearchQuery("")}>
+                    ✕
+                  </button>
+                )}
+              </div>
+
               <button className="close-btn" onClick={() => setIsModalOpen(false)}>
                 ✕
               </button>
             </div>
 
-            <div className="cities-grid">
-              {CITIES.map((city) => (
-                <div
-                  key={city.id}
-                  className={`modal-city-card ${
-                    selectedCity.id === city.id ? "selected" : ""
-                  }`}
-                  onClick={() => handleCitySelect(city)}
-                >
-                  <div className="card-image-wrap">
-                    <img src={city.image} alt={city.name} />
+            {filteredCities.length === 0 ? (
+              <div className="no-cities-found">
+                <p>No destinations found matching "{searchQuery}"</p>
+              </div>
+            ) : (
+              <div className="cities-grid">
+                {filteredCities.map((city) => (
+                  <div
+                    key={city.id}
+                    className={`modal-city-card ${
+                      selectedCity.id === city.id ? "selected" : ""
+                    }`}
+                    onClick={() => handleCitySelect(city)}
+                  >
+                    <div className="card-image-wrap">
+                      <img src={city.image} alt={city.name} />
+                    </div>
+                    <div className="card-info">
+                      <h4>{city.name}</h4>
+                      <span className="card-state">{city.state}</span>
+                      <p className="card-tagline">{city.tagline}</p>
+                    </div>
                   </div>
-                  <div className="card-info">
-                    <h4>{city.name}</h4>
-                    <span className="card-state">{city.state}</span>
-                    <p className="card-tagline">{city.tagline}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {/* PLANNER LAYOUT */}
       <div id="planner-section" className="planner-layout">
-        {/* LEFT SIDEBAR FORM */}
         <aside className="planner-card">
           <div className="card-heading">
             <div className="heading-icon">🤖</div>
@@ -291,7 +324,6 @@ export default function TouristView() {
           </div>
 
           <form onSubmit={handleGenerate}>
-            {/* BUDGET */}
             <div className="form-section">
               <div className="label-row">
                 <label>💰 Budget</label>
@@ -314,7 +346,6 @@ export default function TouristView() {
               </div>
             </div>
 
-            {/* DURATION */}
             <div className="form-section">
               <div className="label-row">
                 <label>🗓 Duration</label>
@@ -335,7 +366,6 @@ export default function TouristView() {
               </div>
             </div>
 
-            {/* INTERESTS */}
             <div className="form-section">
               <div className="label-row">
                 <label>❤️ Your Interests</label>
@@ -372,33 +402,37 @@ export default function TouristView() {
                 <h3>🏪 Local Discoveries</h3>
                 <p>Hidden gems near you in {selectedCity.name}</p>
               </div>
-
               <button>View all</button>
             </div>
 
-            {MOCK_LOCAL_BUSINESSES.slice(0, 3).map((business) => (
-              <div className="business-card" key={business.id}>
-                <div className="business-icon">
-                  {business.type === "Cafe"
-                    ? "☕"
-                    : business.type === "Food"
-                    ? "🍛"
-                    : "🎨"}
-                </div>
+            {localGems.length > 0 ? (
+              localGems.slice(0, 3).map((business) => (
+                <div className="business-card" key={business.id}>
+                  <div className="business-icon">
+                    {business.type === "Cafe"
+                      ? "☕"
+                      : business.type === "Food"
+                      ? "🍛"
+                      : "🎨"}
+                  </div>
 
-                <div className="business-info">
-                  <strong>{business.name}</strong>
-                  <span>📍 {business.distance}</span>
-                  <small>Approx. {business.price}</small>
-                </div>
+                  <div className="business-info">
+                    <strong>{business.name}</strong>
+                    <span>📍 {business.distance}</span>
+                    <small>Approx. {business.price}</small>
+                  </div>
 
-                <button className="arrow-btn">→</button>
-              </div>
-            ))}
+                  <button className="arrow-btn">→</button>
+                </div>
+              ))
+            ) : (
+              <p className="no-local-msg">
+                No local discoveries listed for {selectedCity.name} yet.
+              </p>
+            )}
           </div>
         </aside>
 
-        {/* MAIN ITINERARY RESULTS AREA */}
         <main className="itinerary-area">
           <div className="itinerary-header">
             <div>

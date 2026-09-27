@@ -1208,6 +1208,161 @@
   line-height: 1.3;
 }
 
+/* Smooth Scrolling Pure Page Ke Liye */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 1. Scroll-Driven Fade & Scale Effect (Cards aur Sections Ke Liye) */
+@keyframes scrollFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.planner-card,
+.itinerary-area,
+.business-card,
+.timeline-item,
+.modal-city-card {
+  animation: scrollFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-timeline: view();
+  animation-range: entry 10% cover 30%;
+}
+
+/* 2. Hero Background Par Parallax Effect */
+.landing-hero {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* 3. Smooth Hover Interactions */
+.modal-city-card,
+.business-card,
+.place-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              box-shadow 0.3s ease, 
+              border-color 0.3s ease;
+}
+
+.modal-city-card:hover,
+.business-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+}
+
+.place-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.12);
+}
+
+/* 4. Glassmorphism Sticky Navbar Blur Effect */
+.top-navbar {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.85) !important;
+  transition: box-shadow 0.3s ease;
+}
+
+.top-navbar:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Base Top Navbar */
+.top-navbar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 100%;
+  height: 70px;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 🏝️ DYNAMIC ISLAND SCROLLED STATE (Dark Solid Glass with Ultra Crisp Text Visibility) */
+.top-navbar.dynamic-island {
+  top: 16px;
+  width: 90%;
+  max-width: 1100px;
+  height: 60px;
+  padding: 0 1.5rem;
+  border-radius: 40px;
+  background: rgba(15, 23, 42, 0.92); /* Deeper dark glass background for maximum contrast */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5),
+              0 0 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* BRAND LOGO & TITLE VISIBILITY */
+.top-navbar.dynamic-island .nav-brand strong {
+  color: #ffffff !important;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.top-navbar.dynamic-island .brand-badge {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-weight: 500;
+}
+
+/* LINKS VISIBILITY */
+.top-navbar.dynamic-island .nav-links a {
+  color: #e2e8f0 !important; /* Crisp light gray/white */
+  font-weight: 500;
+  opacity: 0.9;
+  transition: all 0.2s ease;
+}
+
+.top-navbar.dynamic-island .nav-links a:hover {
+  color: #ffffff !important;
+  opacity: 1;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.top-navbar.dynamic-island .nav-links a.active {
+  color: #38bdf8 !important; /* Sky blue active highlight */
+  font-weight: 700;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+/* LOCATION BUTTON VISIBILITY */
+.top-navbar.dynamic-island .location-btn {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.top-navbar.dynamic-island .location-btn:hover {
+  background: #f1f5f9 !important;
+  transform: scale(1.03);
+}
+
 @media (max-width: 768px) {
   .cities-grid {
     grid-template-columns: repeat(2, 1fr);
